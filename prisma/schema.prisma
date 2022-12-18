@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Portfolio {
+    id Int @default(autoincrement()) @id
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt @default(now())
+    url String @db.VarChar(255) @unique
+    alias String @db.VarChar(255) @unique
+    name String @db.VarChar(255)
+    portfolio_tag Portfolio_Tag[]
+}
+
+model Tag {
+    id Int @default(autoincrement()) @id
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt @default(now())
+    text String @db.VarChar(255) @unique
+    portfolio_tag Portfolio_Tag[]
+}
+
+model Portfolio_Tag {
+    id Int @default(autoincrement()) @id
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt @default(now())
+    tag Tag @relation(fields: [tagId], references: [id])
+    tagId Int
+    portfolio Portfolio @relation(fields: [portfolioId], references: [id])
+    portfolioId Int
+
+    @@index([tagId])
+    @@index([portfolioId])
+}
